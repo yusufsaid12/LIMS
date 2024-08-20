@@ -1,11 +1,12 @@
 package com.yusuf.lims.service;
 
 import com.yusuf.lims.dto.BookDto;
-import com.yusuf.lims.entity.Book;
+
+import java.util.List;
 
 public interface BookService {
-
     void saveBook(BookDto bookDto);
-
-    Book findByBookName(String name);
+    List<BookDto> findAllBooks();
+    BookDto findBookByName(String name);
+    void deleteBookById(Long id);
 }

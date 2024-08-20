@@ -15,6 +15,7 @@
             document.getElementById("name").value = bookName;
             document.getElementById("writer").value = bookWriter;
             document.getElementById("pageNumber").value = bookPageNumber;
+            document.getElementById("categoryName").value = bookCategoryName;
         }
 
         function updateRow() {
@@ -22,6 +23,7 @@
                 document.getElementById(`name-${selectedRowId}`).textContent = document.getElementById("name").value;
                 document.getElementById(`writer-${selectedRowId}`).textContent = document.getElementById("writer").value;
                 document.getElementById(`pageNumber-${selectedRowId}`).textContent = document.getElementById("pageNumber").value;
+                document.getElementById(`categoryName-${selectedRowId}`).textContent = document.getElementById("categoryName").value;
             }
         }
     </script>
@@ -49,10 +51,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="book, iterStat : ${books}" th:onclick="|selectRow('${iterStat.index}', '${book.name}', '${book.writer}', '${book.pageNumber}')|">
+        <tr th:each="book, iterStat : ${books}" th:onclick="|selectRow('${iterStat.index}', '${book.name}', '${book.writer}', '${book.pageNumber}', '${book.categoryName}')|">
             <td id="name-${iterStat.index}" th:text="${book.name}"></td>
             <td id="writer-${iterStat.index}" th:text="${book.writer}"></td>
             <td id="pageNumber-${iterStat.index}" th:text="${book.pageNumber}"></td>
+            <td id="categoryName-${iterStat.index}" th:text="${book.categoryName}"></td>
             <td>
                 <button class="btn btn-danger btn-sm" th:onclick="'/delete/' + ${book.id}">Sil</button>
             </td>
@@ -73,10 +76,10 @@
                         id="name"
                         name="name"
                         placeholder="Kitabın Adını girin"
-                        th:field="*{name}"
+                        th:field="*{book.name}"
                         type="text"
                 />
-                <p th:errors = "*{name}" class="text-danger"
+                <p th:errors = "*{book.name}" class="text-danger"
                    th:if="${#fields.hasErrors('writer')}"></p>
                 <label class="form-label">Yazarın Adı</label>
                 <input
@@ -84,10 +87,10 @@
                         id="writer"
                         name="writer"
                         placeholder="Yazarın Adını girin"
-                        th:field="*{writer}"
+                        th:field="*{book.writer}"
                         type="text"
                 />
-                <p th:errors = "*{writer}" class="text-danger"
+                <p th:errors = "*{book.writer}" class="text-danger"z
                    th:if="${#fields.hasErrors('Page Number')}"></p>
                 <label class="form-label">Sayfa Sayısı</label>
                 <input
@@ -95,11 +98,23 @@
                         id="pageNumber"
                         name="pageNumber"
                         placeholder="Sayfa Sayısını girin"
-                        th:field="*{pageNumber}"
+                        th:field="*{book.pageNumber}"
                         type="text"
                 />
-                <p th:errors = "*{pageNumber}" class="text-danger"
-                   th:if="${#fields.hasErrors('pageNumber')}"></p>
+                <p th:errors = "*{book.pageNumber}" class="text-danger"
+                   th:if="${#fields.hasErrors('categoryName')}"></p>
+                th:if="${#fields.hasErrors('Page Number')}"></p>
+                <label class="form-label">Sayfa Sayısı</label>
+                <input
+                        class="form-control"
+                        id="categoryName"
+                        name="pageNumber"
+                        placeholder="Sayfa Sayısını girin"
+                        th:field="*{book.category_name}"
+                        type="text"
+                />
+                <p th:errors = "*{book.category_name}" class="text-danger"
+                   th:if="${#fields.hasErrors('categoryName')}"></p>
                 <button class="btn btn-primary" type="button" onclick="updateRow()">Kaydet</button>
                 <button class="btn btn-primary" type="button">Bul</button>
             </div>

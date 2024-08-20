@@ -17,8 +17,18 @@ public class BookDto {
     private String name;
     @NotEmpty
     private String writer;
+    @NotEmpty
+    private String category_name;
 
-    private String page_number;
+    private int page_number;
 
     private byte[] book_pictures;
+
+    public BookDto(String name, String writer, int pageNumber, String category_name, byte[] book_pictures ) {
+        this.name = name;
+        this.writer = writer;
+        this.page_number = pageNumber;
+        this.category_name = category_name;
+        this.book_pictures = book_pictures;
+    }
 }

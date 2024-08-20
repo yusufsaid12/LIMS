@@ -21,14 +21,14 @@ public class Book {
     @Column(nullable=false)
     private String name;
 
-    @Column(nullable=false, unique=true)
-    private String writer_id;
+    @Column(nullable=false)
+    private String writer_name;
 
     @Column(nullable=false)
-    private String category_id;
+    private String category_name;
 
     @Column(nullable=false)
-    private String page_number;
+    private int page_number;
 
     @Lob
     private byte[] book_pictures;
