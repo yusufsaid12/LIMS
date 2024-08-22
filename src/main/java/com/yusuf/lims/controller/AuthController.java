@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -75,6 +76,14 @@ public class AuthController {
 
         userService.saveUser(userDto);
         return "redirect:/register?success";
+    }
+
+    // handler method to handle list of users
+    @GetMapping("/users/delete/{id}")
+    public String userDelete(@PathVariable("id") Long id){
+        UserDto userDto = new UserDto();
+        userService.deleteUser(userDto.getId());
+        return "redirect:/users";
     }
 
     @PostMapping("/books/save")
