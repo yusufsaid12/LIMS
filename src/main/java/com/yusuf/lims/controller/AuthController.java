@@ -82,7 +82,7 @@ public class AuthController {
     @GetMapping("/users/delete/{id}")
     public String userDelete(@PathVariable("id") Long id){
         UserDto userDto = new UserDto();
-        userService.deleteUser(userDto.getId());
+        userService.deleteUser(id);
         return "redirect:/users";
     }
 

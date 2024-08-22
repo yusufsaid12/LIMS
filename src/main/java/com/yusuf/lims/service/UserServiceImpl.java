@@ -59,10 +59,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(Long id) {
         User user = userRepository.getReferenceById(id);
+        user.getRoles().clear();
+        userRepository.save(user);
         userRepository.delete(user);
         return true;
     }
-
 
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
