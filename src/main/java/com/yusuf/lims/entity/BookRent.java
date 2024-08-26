@@ -1,32 +1,36 @@
 package com.yusuf.lims.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "book_rent")
 public class BookRent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(
-            joinColumns={@JoinColumn(name="BOOK_RENT_ID", referencedColumnName="ID")},
-            inverseJoinColumns={@JoinColumn(name="BOOK_ID", referencedColumnName="ID")})
-    private List<Book> books = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(
-            joinColumns={@JoinColumn(name="BOOK_RENT_ID", referencedColumnName="ID")},
-            inverseJoinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")})
-    private List<User> users = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(nullable=false)
-    private Date rent_date;
+    @Column(nullable = false)
+    private Date rentDate;
 
-    @Column(nullable=false)
-    private Date return_date;
+    @Column(nullable = false)
+    private Date returnDate;
 }

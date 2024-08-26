@@ -5,9 +5,16 @@ import com.yusuf.lims.dto.UserDto;
 import com.yusuf.lims.entity.Book;
 import com.yusuf.lims.entity.User;
 import com.yusuf.lims.repository.BookRepository;
+import com.yusuf.lims.repository.UserRepository;
+import com.yusuf.lims.security.CustomUserDetailsService;
 import com.yusuf.lims.service.BookService;
 import com.yusuf.lims.service.UserService;
+import com.yusuf.lims.service.UserServiceImpl;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -24,17 +32,27 @@ public class AuthController {
     private BookRepository bookRepository;
     private UserService userService;
     private BookService bookService;
+    private UserServiceImpl userServiceImpl ;
+    private UserRepository userRepository;
 
-    public AuthController(UserService userService, BookService bookService, BookRepository bookRepository) {
+    public AuthController(UserService userService, BookService bookService, BookRepository bookRepository, UserRepository userRepository,UserServiceImpl userServiceImpl) {
         this.userService = userService;
         this.bookService = bookService;
         this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
+        this.userServiceImpl = userServiceImpl;
     }
 
     // handler method to handle home page request
     @GetMapping("/index")
-    public String home(){
-        return "index";
+    public ModelAndView index(Authentication authentication) {
+        ModelAndView modelAndView = new ModelAndView("index");
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            UserDto user = userServiceImpl.mapToUserDto(userRepository.findUserByEmail(userDetails.getUsername()));
+            modelAndView.addObject("user", user);
+        }
+        return modelAndView;
     }
 
     // handler method to handle login request
@@ -43,9 +61,11 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/bookInformation")
-    public String bookInformation(){
-        return "bookInformation";
+    @GetMapping("/store")
+    public String showBooks(Model model) {
+        List<BookDto> books = bookService.findAllBooks(); // Kitapları veritabanından al
+        model.addAttribute("books", books); // Kitapları model'e ekle
+        return "store"; // Thymeleaf şablonunun adı
     }
 
     // handler method to handle user registration form request
@@ -86,48 +106,4 @@ public class AuthController {
         return "redirect:/users";
     }
 
-    @PostMapping("/books/save")
-    public String saveBook(@Valid @ModelAttribute("book") BookDto bookDto, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("book", bookDto);
-            return "books";
-        }
-
-        bookService.saveBook(bookDto);  // Kitap kaydetme işlemi
-        return "redirect:/bookIformation?success";
-    }
-
-    @GetMapping("/bookForm")
-    public String showBookForm(Model model) {
-        model.addAttribute("book", new BookDto());
-        return "bookForm";
-    }
-
-    @GetMapping("/books")
-    public String books(Model model){
-        List<BookDto> books = bookService.findAllBooks();
-        model.addAttribute("books", books);
-        model.addAttribute("book", new BookDto());  // Yeni kitap eklemek için form
-        return "books";
-    }
-
-    // handler method to handle list of users
-    @GetMapping("/users")
-    public String users(Model model){
-        List<UserDto> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        return "users";
-    }
-
-    public BookDto findBookByName(String name) {
-        Book book = bookRepository.findByName(name);
-        if (book != null) {
-            return new BookDto(book.getName(), book.getWriter_name(), book.getPage_number(), book.getCategory_name(), book.getBook_pictures());
-        }
-        return null;
-    }
-
-    public void deleteBookById(Long id) {
-        bookRepository.deleteById(id);
-    }
 }

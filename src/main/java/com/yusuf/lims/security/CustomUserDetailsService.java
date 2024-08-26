@@ -2,7 +2,9 @@ package com.yusuf.lims.security;
 
 import com.yusuf.lims.entity.Role;
 import com.yusuf.lims.entity.User;
+import com.yusuf.lims.repository.RoleRepository;
 import com.yusuf.lims.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

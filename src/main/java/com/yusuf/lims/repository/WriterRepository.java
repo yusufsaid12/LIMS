@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WriterRepository extends JpaRepository<Writer, String> {
 
-    Writer findByFirsthName(String firsth_name);
+    Writer findByFirstName(String first_name);
     Writer findByLastName(String last_name);
 
 }

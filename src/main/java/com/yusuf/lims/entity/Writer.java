@@ -19,7 +19,7 @@ public class Writer {
     private Long id;
 
     @Column(nullable=false)
-    private String firsthName;
+    private String firstName;
 
     @Column(nullable=false)
     private String lastName;

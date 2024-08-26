@@ -30,6 +30,9 @@ public class Book {
     @Column(nullable=false)
     private int page_number;
 
+    @Column(nullable=false)
+    private boolean rent_status;
+
     @Lob
     private byte[] book_pictures;
 }
