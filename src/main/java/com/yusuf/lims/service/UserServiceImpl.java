@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         // encrypt the password using spring security
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        Role role = roleRepository.findByName("ROLE_ADMIN");
+        Role role = roleRepository.findByName("ROLE_USER");
         if (role == null) {
             role = checkRoleExist();
         }
@@ -52,7 +52,12 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map((user) -> mapToUserDto(user))
+                .map(user -> {
+                    UserDto userDto = mapToUserDto(user);
+                    userDto.setRoles(user.getRoles().stream()
+                            .collect(Collectors.toList()));
+                    return userDto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -65,6 +70,19 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public boolean updateUser(Long id, String password, Role role) {
+        User user = userRepository.getReferenceById(id);
+        String name = user.getName();
+        String email = user.getEmail();
+        deleteUser(id);
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(Arrays.asList(role));
+        userRepository.save(user);
+        return true;
+    }
     public UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         String[] str = user.getName().split(" ");
