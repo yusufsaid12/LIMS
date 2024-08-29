@@ -49,6 +49,12 @@
                 <li>
                     <a class="nav-link active" aria-current="page" th:href="@{/logout}" th:if="${user != null}">Çıkış Yap</a>
                 </li>
+                <li>
+                    <a class="nav-link active" aria-current="page" th:href="@{/users}" th:if="${role == '[ROLE_ADMIN]'}">Kullanıcılar</a>
+                </li>
+                <li>
+                    <a class="nav-link active" aria-current="page" th:href="@{/bookInformation}" th:if="${role == '[ROLE_ADMIN]'}">Kitap İşlemleri</a>
+                </li>
             </ul>
         </div>
     </div>
