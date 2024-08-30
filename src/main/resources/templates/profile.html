@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <style>
+    .profile-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .profile-header h2 {
+      margin-bottom: 10px;
+    }
+    .profile-picture {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      object-fit: cover;
+    }
+    .profile-info label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .profile-info p {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+    .profile-buttons {
+      text-align: center;
+    }
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-warning .bi-pencil-square {
+      margin-right: 5px;
+    }
+  </style>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/index}">Ana Sayfa</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" th:href="@{/logout}">Çıkış Yap</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="profile-container">
+    <div class="profile-header">
+      <img src="https://via.placeholder.com/120" alt="Profil Resmi" class="profile-picture">
+      <h2>Kullanıcı Profili</h2>
+    </div>
+    <div class="profile-info">
+      <label>İsim:</label>
+      <p th:text="${user.firstName}"></p>
+
+      <label>Soyad:</label>
+      <p th:text="${user.lastName}"></p>
+
+      <label>E-posta:</label>
+      <p th:text="${user.email}"></p>
+    </div>
+    <div class="profile-buttons">
+      <button class="btn btn-warning" data-bs-toggle="modal" th:data-bs-target="'#updateModal-' + ${user.id}">
+        <i class="bi bi-pencil-square"></i> Düzenle
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Section -->
+<div class="modal fade" th:id="'updateModal-' + ${user.id}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form th:action="@{/profile/update}" method="post" role="form">
+        <div class="modal-header">
+          <h5 class="modal-title">Kullanıcıyı Düzenle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" th:value="${user.id}"/>
+          <div class="mb-3">
+            <label>İsim</label>
+            <input type="text" class="form-control" name="firstName" th:value="${user.firstName}" required/>
+          </div>
+          <div class="mb-3">
+            <label>Soyad</label>
+            <input type="text" class="form-control" name="lastName" th:value="${user.lastName}" required/>
+          </div>
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" name="email" th:value="${user.email}" readonly/>
+          </div>
+          <div class="mb-3">
+            <label>Şifre</label>
+            <input type="password" class="form-control" name="password"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Kaydet</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>

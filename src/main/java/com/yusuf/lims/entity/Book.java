@@ -1,10 +1,7 @@
 package com.yusuf.lims.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -31,8 +28,9 @@ public class Book {
     private int page_number;
 
     @Column(nullable=false)
-    private boolean rent_status;
+    private boolean rent_status = false;
 
     @Lob
+    @Column(name = "book_pictures")
     private byte[] book_pictures;
 }
