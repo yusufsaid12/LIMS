@@ -1,5 +1,6 @@
 package com.yusuf.lims.dto;
 
+import com.yusuf.lims.entity.Book;
 import com.yusuf.lims.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,4 +29,6 @@ public class UserDto
     private String password;
 
     private List<Role> roles;
+
+    private List<Book> userBooks;
 }

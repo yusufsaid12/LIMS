@@ -36,7 +36,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> findAllBooks() {
         return bookRepository.findAll().stream()
-                .map(book -> new BookDto(book.getName(), book.getWriter_name(), book.getPage_number(), book.getCategory_name(), book.getBook_pictures()))
+                .map(book -> new BookDto(book.getName(), book.getWriter_name(), book.getPage_number(), book.getCategory_name(), book.getBook_pictures(), book.isRent_status()))
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +44,7 @@ public class BookServiceImpl implements BookService {
     public BookDto findBookByName(String name) {
         Book book = bookRepository.findByName(name);
         if (book != null) {
-            return new BookDto(book.getName(), book.getWriter_name(), book.getPage_number(), book.getCategory_name(), book.getBook_pictures());
+            return new BookDto(book.getName(), book.getWriter_name(), book.getPage_number(), book.getCategory_name(), book.getBook_pictures(), book.isRent_status());
         }
         return null;
     }

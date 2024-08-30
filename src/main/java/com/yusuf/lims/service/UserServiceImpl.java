@@ -8,6 +8,7 @@ import com.yusuf.lims.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserDto userDto) {
         User user = new User();
-        user.setName(userDto.getFirstName() + " " + userDto.getLastName());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         // encrypt the password using spring security
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -71,23 +73,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUser(Long id, String password, Role role) {
-        User user = userRepository.getReferenceById(id);
-        String name = user.getName();
-        String email = user.getEmail();
-        deleteUser(id);
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(Arrays.asList(role));
+    public boolean updateUser(Long id, String password, String firstName, String lastName) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (password != null && !password.trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+
         userRepository.save(user);
         return true;
     }
+
+    @Override
+    public boolean updateRole(Long id, List<Role> roles) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (roles != null && !roles.isEmpty()) {
+            // Create a new modifiable list
+            List<Role> newRoles = new ArrayList<>(roles);
+            user.setRoles(newRoles);
+        }
+
+        userRepository.save(user);
+        return true;
+    }
+
     public UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
-        String[] str = user.getName().split(" ");
-        userDto.setFirstName(str[0]);
-        userDto.setLastName(str[1]);
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         userDto.setId(user.getId());
         return userDto;

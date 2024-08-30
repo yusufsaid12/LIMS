@@ -53,7 +53,7 @@
                     <a class="nav-link active" aria-current="page" th:href="@{/users}" th:if="${role == '[ROLE_ADMIN]'}">Kullanıcılar</a>
                 </li>
                 <li>
-                    <a class="nav-link active" aria-current="page" th:href="@{/bookInformation}" th:if="${role == '[ROLE_ADMIN]'}">Kitap İşlemleri</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{/bookRegister}" th:if="${role == '[ROLE_ADMIN]'}">Kitap İşlemleri</a>
                 </li>
             </ul>
         </div>
@@ -72,7 +72,22 @@
             <!-- Giriş yapmış kullanıcıya özel içerikler -->
             <div th:if="${user != null}">
                 <p>Giriş yapmış kullanıcıya özel içerikler</span></p>
-                <!-- Giriş yapmış kullanıcıya özel alanlar buraya eklenebilir -->
+                <div class="row mt-3">
+                    <div class="col-md-4" th:each="book : ${books}">
+                        <div class="card mb-4">
+                            <img th:src="@{'data:image/jpeg;base64,' + ${book.book_pictures}}" class="card-img-top" alt="Kitap Resmi">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${book.getName()}">Kitap Adı</h5>
+                                <p class="card-text"><strong>Yazar:</strong> <span th:text="${book.getWriter()}">Yazar Adı</span></p>
+                                <p class="card-text"><strong>Kategori:</strong> <span th:text="${book.getCategory_name()}">Kategori Adı</span></p>
+                                <p class="card-text"><strong>Sayfa Sayısı:</strong> <span th:text="${book.getPage_number()}">Sayfa Sayısı</span></p>
+                                <p class="card-text"><strong>Durum:</strong> <span th:text="${book.rent_status ? 'Kirada' : 'Mevcut'}">Durum</span></p>
+                                <button class="btn btn-success" th:if="${book.rent_status == false}" th:action="@{/book/rent}">Kirala</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
             <!-- Giriş yapmamış kullanıcıya özel içerikler -->
             <div th:if="${user == null}">

@@ -15,5 +15,7 @@ public interface UserService {
 
     boolean deleteUser(Long id);
 
-    boolean updateUser(Long id, String roleName, Role role);
+    boolean updateUser(Long id, String password, String firstName, String lastName);
+
+    boolean updateRole(Long id, List<Role> roles);
 }

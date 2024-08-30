@@ -24,7 +24,10 @@ public class BookDto {
 
     private byte[] book_pictures;
 
-    public BookDto(String name, String writer, int pageNumber, String category_name, byte[] book_pictures ) {
+    private boolean rent_status;
+
+    public BookDto(String name, String writer, int pageNumber, String category_name, byte[] book_pictures, boolean rent_status ) {
+        this.rent_status = rent_status;
         this.name = name;
         this.writer = writer;
         this.page_number = pageNumber;

@@ -14,7 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class SpringSecurity {
+public class SpringSecurity{
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -31,7 +31,9 @@ public class SpringSecurity {
                         authorize.requestMatchers("/register/**").permitAll()
                                 .requestMatchers("/index").permitAll()
                                 .requestMatchers("/store").permitAll()
+                                .requestMatchers("/profile/**").authenticated()
                                 .requestMatchers("/users/**").hasRole("ADMIN")
+                                .requestMatchers("/bookRegister/**").hasRole("ADMIN")
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")
