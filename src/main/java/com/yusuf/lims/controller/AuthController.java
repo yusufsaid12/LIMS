@@ -10,6 +10,7 @@ import com.yusuf.lims.repository.RoleRepository;
 import com.yusuf.lims.repository.UserRepository;
 import com.yusuf.lims.security.CustomUserDetailsService;
 import com.yusuf.lims.service.BookService;
+import com.yusuf.lims.service.BookServiceImpl;
 import com.yusuf.lims.service.UserService;
 import com.yusuf.lims.service.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -25,11 +26,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.*;
 
 @Controller
 public class AuthController {
 
+    private final BookServiceImpl bookServiceImpl;
     private final RoleRepository roleRepository;
     private BookRepository bookRepository;
     private UserService userService;
@@ -37,13 +40,14 @@ public class AuthController {
     private UserServiceImpl userServiceImpl;
     private UserRepository userRepository;
 
-    public AuthController(UserService userService, BookService bookService, BookRepository bookRepository, UserRepository userRepository, UserServiceImpl userServiceImpl, RoleRepository roleRepository) {
+    public AuthController(UserService userService, BookService bookService, BookRepository bookRepository, UserRepository userRepository, UserServiceImpl userServiceImpl, RoleRepository roleRepository, BookServiceImpl bookServiceImpl) {
         this.userService = userService;
         this.bookService = bookService;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.userServiceImpl = userServiceImpl;
         this.roleRepository = roleRepository;
+        this.bookServiceImpl = bookServiceImpl;
     }
 
     // handler method to handle home page request
@@ -62,9 +66,23 @@ public class AuthController {
         return modelAndView;
     }
 
+    @PostMapping("/index/rent/{id}")
+    public String rentBook(@PathVariable("id") Long bookId, Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            UserDto user = userServiceImpl.mapToUserDto(userRepository.findByEmail(userDetails.getUsername()));
+            Book book = bookRepository.findById(bookId).get();
+            book.setRentStatus(true);
+            user.getUserBooks().add(book);
+            bookServiceImpl.rentBook(user);
+        }
+        return "redirect:/index";
+    }
+
     @GetMapping("/profile")
     public String profilePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         UserDto user = userServiceImpl.mapToUserDto(userRepository.findByEmail(userDetails.getUsername()));
+        List<BookDto> book = bookService.findAllBooks();
         // Kullanıcı bilgilerini alıp Model'e ekleyin
         model.addAttribute("user", user);
         return "profile";
@@ -77,17 +95,18 @@ public class AuthController {
         return "redirect:/profile"; // veya uygun bir gösterim sayfasına yönlendirme
     }
 
+    @GetMapping("/profile/returnBook/{name}")
+    public String returnBook(@PathVariable("name") String name, @AuthenticationPrincipal UserDetails userDetails) {
+        UserDto userDto = userServiceImpl.mapToUserDto(userRepository.findByEmail(userDetails.getUsername()));
+        bookService.returnBook(name, userDto);
+        return "redirect:/users";
+    }
+
+
     // handler method to handle login request
     @GetMapping("/login")
     public String login() {
         return "login";
-    }
-
-    @GetMapping("/store")
-    public String showBooks(Model model) {
-        List<BookDto> books = bookService.findAllBooks(); // Kitapları veritabanından al
-        model.addAttribute("books", books); // Kitapları model'e ekle
-        return "store"; // Thymeleaf şablonunun adı
     }
 
     // handler method to handle user registration form request
@@ -103,7 +122,7 @@ public class AuthController {
     @PostMapping("/register/save")
     public String registration(@Valid @ModelAttribute("user") UserDto userDto,
                                BindingResult result,
-                               Model model) {
+                               Model model) throws IOException {
         User existingUser = userService.findUserByEmail(userDto.getEmail());
 
         if (existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()) {
@@ -151,38 +170,6 @@ public class AuthController {
         return "users";
     }
 
-    @GetMapping("/bookRegister")
-    public String showBookRegistrationForm(Model model) {
-        BookDto bookDto = new BookDto();
-        List<BookDto> books = bookService.findAllBooks();
-        model.addAttribute("books", books);
-        model.addAttribute("book", bookDto);
-        return "bookRegister";
-    }
-
-    @PostMapping("/bookRegister/save")
-    public String registrationBook(@Valid @ModelAttribute("bookDto") BookDto bookDto,
-                                   BindingResult result,
-                                   Model model) {
-        BookDto existingBook = bookService.findBookByName(bookDto.getName());
-        Book book = new Book();
-        book.setBook_pictures(bookDto.getBook_pictures());
-        bookRepository.save(book);
-
-        if (existingBook != null && existingBook.getName() != null && !existingBook.getName().isEmpty()) {
-            result.rejectValue("name", null,
-                    "Aynı isim ile kayıtlı bir kitap zaten var");
-        }
-
-        if (result.hasErrors()) {
-            model.addAttribute("bookRegister", bookDto);
-            return "/bookRegister";
-        }
-
-        bookService.saveBook(bookDto);
-        return "redirect:/bookRegister?success";
-    }
-
     // handler method to handle deletion of books
     @GetMapping("/bookRegister/delete/{id}")
     public String bookDelete(@PathVariable("id") Long id) {
@@ -195,6 +182,37 @@ public class AuthController {
         List<BookDto> bookRegister = bookService.findAllBooks();
         model.addAttribute("bookRegister", bookRegister);
         return "bookRegister";
+    }
+
+    @GetMapping("/bookRegister")
+    public String bookRegister(Model model) {
+        List<BookDto> books = bookService.findAllBooks();
+        model.addAttribute("books", books);
+        model.addAttribute("bookDto", new BookDto());  // Ensure you have a blank form object
+        return "bookRegister";
+    }
+
+    @PostMapping("/bookRegister/save")
+    public String registrationBook(@Valid @ModelAttribute("bookDto") BookDto bookDto,
+                                   BindingResult result,
+                                   Model model) throws IOException {
+
+        Book existingBook = bookService.findBookByName(bookDto.getName());
+
+        if (existingBook != null && existingBook.getName() != null && !existingBook.getName().isEmpty()) {
+            result.rejectValue("name", null,
+                    "Aynı isim ile kayıtlı bir kitap zaten var");
+        }
+
+        if (result.hasErrors()) {
+            List<BookDto> books = bookService.findAllBooks();
+            model.addAttribute("books", books);  // Add this line to repopulate the book list
+            model.addAttribute("bookDto", bookDto);  // Make sure to pass back the book DTO
+            return "bookRegister";
+        }
+
+        bookService.saveBook(bookDto);
+        return "redirect:/bookRegister?success";
     }
 
 

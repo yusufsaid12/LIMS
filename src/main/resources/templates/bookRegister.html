@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Kitap İşlemleri</title>
@@ -13,7 +11,9 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -29,29 +29,27 @@
 <table class="table table-striped table-bordered table-hover align-middle">
     <thead class="table-dark text-center">
     <tr>
-        <th>Profil</th>
-        <th>İsim</th>
-        <th>Soyad</th>
-        <th>E-posta</th>
-        <th>Rol</th>
+        <th>Kitap ID</th>
+        <th>Kitap Adı</th>
+        <th>Yazar</th>
+        <th>Kategori</th>
         <th>İşlem</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="book : ${books}" class="text-center">
-        <td th:text="${book.getName()}"></td>
-        <td th:text="${book.getWriter()}"></td>
-        <td th:text="${book.getCategory_name()}"></td>
+        <td th:text="${book.id}"></td>
+        <td th:text="${book.name}"></td>
+        <td th:text="${book.writer}"></td>
+        <td th:text="${book.category}"></td>
         <td>
-            <a class="btn btn-danger btn-sm" th:href="@{/users/delete/{id}(id=${book.getId()})}">
-                Sil
-            </a>
+            <a class="btn btn-danger btn-sm" th:href="@{/bookRegister/delete/{id}(id=${book.id})}">Sil</a>
         </td>
     </tr>
     </tbody>
 </table>
 
-<br /><br /><br />
+<br/><br/><br/>
 <div class="container">
     <div class="row col-md-8 offset-md-2">
         <div class="card">
@@ -65,65 +63,58 @@
                         method="post"
                         role="form"
                         th:action="@{/bookRegister/save}"
-                        th:object="${book}"
+                        th:object="${bookDto}"
                 >
                     <div class="form-group mb-3">
-                        <label class="form-label">Kitap Adı</label>
+                        <label class="form-label">Kitabın Adı</label>
                         <input
                                 class="form-control"
-                                id="name"
-                                name="name"
-                                placeholder="Kitap ismini girin"
-                                th:field="*{getName()}"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="Kitabın Adını Girin"
+                                th:field="*{name}"
                                 type="text"
                         />
+                        <p th:errors = "*{name}" class="text-danger"></p>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Yazar</label>
+                        <label class="form-label">Yazarın Adı</label>
                         <input
                                 class="form-control"
-                                id="writer"
-                                name="writer"
-                                placeholder="Kitabın yazarını girin"
-                                th:field="*{getWriter()}"
+                                id="lastName"
+                                name="lastName"
+                                placeholder="Yazarın Adını Girin"
+                                th:field="*{writer}"
                                 type="text"
                         />
+                        <p th:errors = "*{writer}" class="text-danger"></p>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Kategori</label>
                         <input
                                 class="form-control"
-                                id="category"
-                                name="category"
-                                placeholder="Kitabın kategorisni girin"
-                                th:field="*{getCategory_name()}"
+                                id="email"
+                                name="email"
+                                placeholder="Kitabın Kategorisini Girin"
+                                th:field="*{category}"
                                 type="text"
                         />
+                        <p th:errors = "*{category}" class="text-danger"></p>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Sayfa Numarası</label>
+                        <label class="form-label">Sayfa Sayısı</label>
                         <input
                                 class="form-control"
-                                id="page_number"
-                                name="page_number"
-                                placeholder="Kitabın sayfa sayısını girin"
-                                th:field="*{getPage_number()}"
+                                id="password"
+                                name="password"
+                                placeholder="Sayfa Sayısını Giriniz"
+                                th:field="*{pageNumber}"
                                 type="number"
                         />
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label">Kitap Resmi</label>
-                        <input
-                                class="form-control"
-                                id="book_image"
-                                name="book_image"
-                                th:field="*{getBook_pictures()}"
-                                type="file"
-                        accept="image/*"
-                        />
+                        <p th:errors = "*{pageNumber}" class="text-danger"></p>
                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary" type="save">Kaydet</button>

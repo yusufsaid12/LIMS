@@ -2,9 +2,11 @@ package com.yusuf.lims.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,19 +20,16 @@ public class Book {
     @Column(nullable=false)
     private String name;
 
-    @Column(nullable=false)
-    private String writer_name;
+    @Column(nullable=false, name = "writer_name")
+    private String writer;
 
-    @Column(nullable=false)
-    private String category_name;
+    @Column(nullable=false, name = "category_name")
+    private String category;
 
-    @Column(nullable=false)
-    private int page_number;
+    @Column(nullable=false, name = "page_number")
+    private int pageNumber;
 
-    @Column(nullable=false)
-    private boolean rent_status = false;
 
-    @Lob
-    @Column(name = "book_pictures")
-    private byte[] book_pictures;
+    @Column(nullable=false, columnDefinition = "false", name = "rent_status")
+    private boolean rentStatus;
 }

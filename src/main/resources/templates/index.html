@@ -7,6 +7,7 @@
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .navbar-nav .nav-link {
             margin-right: 15px;
@@ -25,6 +26,28 @@
         .kutucuk {
             padding: 60px 0;
             text-align: center;
+        }
+        .book-card {
+            position: relative;
+            padding: 20px;
+        }
+        .book-card .book-icon {
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 40px;
+            color: #007bff;
+        }
+        #rentedLabel {
+            display: none;
+            color: green;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .tick-icon {
+            color: green;
+            margin-left: 5px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -69,34 +92,57 @@
 <div class="kutucuk">
     <div class="row">
         <div class="col-12">
-            <!-- Giriş yapmış kullanıcıya özel içerikler -->
-            <div th:if="${user != null}">
-                <p>Giriş yapmış kullanıcıya özel içerikler</span></p>
-                <div class="row mt-3">
-                    <div class="col-md-4" th:each="book : ${books}">
-                        <div class="card mb-4">
-                            <img th:src="@{'data:image/jpeg;base64,' + ${book.book_pictures}}" class="card-img-top" alt="Kitap Resmi">
-                            <div class="card-body">
-                                <h5 class="card-title" th:text="${book.getName()}">Kitap Adı</h5>
-                                <p class="card-text"><strong>Yazar:</strong> <span th:text="${book.getWriter()}">Yazar Adı</span></p>
-                                <p class="card-text"><strong>Kategori:</strong> <span th:text="${book.getCategory_name()}">Kategori Adı</span></p>
-                                <p class="card-text"><strong>Sayfa Sayısı:</strong> <span th:text="${book.getPage_number()}">Sayfa Sayısı</span></p>
-                                <p class="card-text"><strong>Durum:</strong> <span th:text="${book.rent_status ? 'Kirada' : 'Mevcut'}">Durum</span></p>
-                                <button class="btn btn-success" th:if="${book.rent_status == false}" th:action="@{/book/rent}">Kirala</button>
-                            </div>
+            <div class="row mt-3">
+                <div class="col-md-4" th:each="book : ${books}">
+                    <div class="card mb-4 book-card">
+                        <div class="book-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${book.name}">Kitap Adı</h5>
+                            <p class="card-text"><strong>Yazar:</strong> <span th:text="${book.writer}">Yazar Adı</span></p>
+                            <p class="card-text"><strong>Kategori:</strong> <span th:text="${book.category}">Kategori Adı</span></p>
+                            <p class="card-text"><strong>Sayfa Sayısı:</strong> <span th:text="${book.pageNumber}">Sayfa Sayısı</span></p>
+                            <p class="card-text"><strong>Durum:</strong> <span th:text="${book.rentStatus ? 'Kirada' : 'Mevcut'}">Durum</span></p>
+                            <form th:action="@{/index/rent/{id}(id=${book.id})}" method="post" onsubmit="return handleFormSubmit(this)">
+                                <button class="btn btn-success rent-button"
+                                        th:id="'rentButton-' + ${book.id}"
+                                        th:if="${!book.rentStatus && user != null}"
+                                        type="submit">
+                                    Kirala
+                                </button>
+                            </form>
+                            <span class="rented-label" th:id="'rentedLabel-' + ${book.id}"
+                                  th:style="${book.rentStatus ? 'display:inline;' : 'display:none;'}">
+                                    Kiralandı <i class="tick-icon fas fa-check-circle"></i>
+                                </span>
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
-            <!-- Giriş yapmamış kullanıcıya özel içerikler -->
-            <div th:if="${user == null}">
-                <p>Henüz giriş yapmadınız. Lütfen giriş yapın veya kayıt olun.</p>
-                <!-- Giriş yapılmamış kullanıcıya özel alanlar buraya eklenebilir -->
-            </div>
         </div>
     </div>
 </div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function handleFormSubmit(form) {
+        var bookId = form.action.split('/').pop();
+        var rentButton = document.getElementById('rentButton-' + bookId);
+        var rentedLabel = document.getElementById('rentedLabel-' + bookId);
+
+        rentButton.style.display = 'none';
+        rentedLabel.style.display = 'inline';
+
+        // Form gönderimini geciktir
+        setTimeout(function() {
+            form.submit();
+        }, 500);  // 500ms gecikme
+
+        return false;  // Form'un normal gönderimini engelle
+    }
+    /*]]>*/
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </body>
