@@ -46,6 +46,9 @@
         </thead>
         <tbody>
         <tr th:each="user : ${users}" class="text-center">
+            <td>
+                    <a class="nav-link active" aria-current="page" th:href="@{/profile}">Profiline Bak</a>
+            </td>
             <td th:text="${user.firstName}"></td>
             <td th:text="${user.lastName}"></td>
             <td th:text="${user.email}"></td>

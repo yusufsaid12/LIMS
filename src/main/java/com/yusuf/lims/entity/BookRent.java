@@ -28,9 +28,12 @@ public class BookRent {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column()
     private Date rentDate;
 
-    @Column(nullable = false)
+    @Column()
     private Date returnDate;
+
+    @Column(name = "rent_status")
+    private boolean rentStatus;
 }

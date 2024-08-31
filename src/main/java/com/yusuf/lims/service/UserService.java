@@ -4,10 +4,11 @@ import com.yusuf.lims.dto.UserDto;
 import com.yusuf.lims.entity.Role;
 import com.yusuf.lims.entity.User;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
-    void saveUser(UserDto userDto);
+    void saveUser(UserDto userDto) throws IOException;
 
     User findUserByEmail(String email);
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -18,20 +19,9 @@ public class BookDto {
     @NotEmpty
     private String writer;
     @NotEmpty
-    private String category_name;
+    private String category;
 
-    private int page_number;
+    private int pageNumber;
 
-    private byte[] book_pictures;
-
-    private boolean rent_status;
-
-    public BookDto(String name, String writer, int pageNumber, String category_name, byte[] book_pictures, boolean rent_status ) {
-        this.rent_status = rent_status;
-        this.name = name;
-        this.writer = writer;
-        this.page_number = pageNumber;
-        this.category_name = category_name;
-        this.book_pictures = book_pictures;
-    }
+    private boolean rentStatus;
 }
